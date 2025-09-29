@@ -1,9 +1,11 @@
 # tests/test_api.py
 from fastapi.testclient import TestClient
+
+import app as app_module
 from app import app
-import app as app_module 
 
 client = TestClient(app)
+
 
 def test_analyze_success(monkeypatch):
     # Patch the symbol used by the route

@@ -1,5 +1,5 @@
-import re
 import os
+import re
 
 from dotenv import load_dotenv
 from langchain.tools import tool
@@ -31,6 +31,7 @@ def pattern_check(offer_text: str) -> dict:
         rating = "GREEN"
 
     return {"rating": rating, "score": score, "reasons": reasons}
+
 
 # Tool 2: built-in Tavily search
 search_tool = TavilySearchResults(max_results=3, tavily_api_key=TAVILY_API_KEY)

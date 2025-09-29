@@ -33,6 +33,8 @@ This project helps analyze investment offers by:
 - Exposing a **FastAPI service** for easy integration  
 
 ---
+
+
 ## Tools Used
 
 This AI agent combines **rule-based detection** with **AI + web search** to analyze investment offers.

@@ -1,29 +1,34 @@
-import os, json
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
-from langchain.agents import create_tool_calling_agent, AgentExecutor
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from conf import SYSTEM_PROMPT, MODEL_VERSION
-from schema import FraudGuardResult
+import json
+import os
 from uuid import uuid4
 
+from dotenv import load_dotenv
+from langchain.agents import AgentExecutor, create_tool_calling_agent
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_openai import ChatOpenAI
 
-from tools import pattern_check, search_tool 
+from conf import MODEL_VERSION, SYSTEM_PROMPT
+from schema import FraudGuardResult
+from tools import pattern_check, search_tool
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
+
 # Build agent
 def build_agent_executor() -> AgentExecutor:
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", SYSTEM_PROMPT),
-        ("human", "{input}"),
-        MessagesPlaceholder("agent_scratchpad"),
-    ])
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", SYSTEM_PROMPT),
+            ("human", "{input}"),
+            MessagesPlaceholder("agent_scratchpad"),
+        ]
+    )
     llm = ChatOpenAI(model=MODEL_VERSION, temperature=0, api_key=OPENAI_API_KEY)
     tools = [pattern_check, search_tool]
     agent = create_tool_calling_agent(llm, tools, prompt)
     return AgentExecutor(agent=agent, tools=tools, verbose=False)
+
 
 # Run agent
 def run_fraud_agent(query: str) -> dict:
@@ -33,13 +38,21 @@ def run_fraud_agent(query: str) -> dict:
     try:
         data = json.loads(output) if isinstance(output, str) else output
     except Exception:
-        data = {"rating": "UNKNOWN", "score": 0, "reasons": [], "evidence": [], "disclaimer": str(output)}
+        data = {
+            "rating": "UNKNOWN",
+            "score": 0,
+            "reasons": [],
+            "evidence": [],
+            "disclaimer": str(output),
+        }
     return {
         "rating": data.get("rating", "UNKNOWN"),
         "score": int(data.get("score", 0) or 0),
         "reasons": list(data.get("reasons", []) or []),
         "evidence": list(data.get("evidence", []) or []),
-        "disclaimer": data.get("disclaimer", "Educational triage only. Not investment advice."),
+        "disclaimer": data.get(
+            "disclaimer", "Educational triage only. Not investment advice."
+        ),
     }
 
 

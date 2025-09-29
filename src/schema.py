@@ -1,10 +1,13 @@
-from typing import List, Optional
-from pydantic import BaseModel, HttpUrl, field_validator
 import json
+from typing import List, Optional
+
+from pydantic import BaseModel, HttpUrl, field_validator
+
 
 class Evidence(BaseModel):
     title: str
-    url: Optional[HttpUrl] = None 
+    url: Optional[HttpUrl] = None
+
 
 class FraudGuardResult(BaseModel):
     rating: str
@@ -12,6 +15,7 @@ class FraudGuardResult(BaseModel):
     reasons: List[str]
     evidence: Optional[List[Evidence]] = []
     disclaimer: str
+
     @field_validator("disclaimer", mode="before")
     @classmethod
     def unwrap_disclaimer_if_json(cls, v, values):
@@ -25,6 +29,7 @@ class FraudGuardResult(BaseModel):
             except json.JSONDecodeError:
                 pass
         return v
+
 
 class QueryIn(BaseModel):
     query: str
