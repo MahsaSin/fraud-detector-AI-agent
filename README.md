@@ -33,6 +33,35 @@ This project helps analyze investment offers by:
 - Exposing a **FastAPI service** for easy integration  
 
 ---
+## Tools Used
+
+This AI agent combines **rule-based detection** with **AI + web search** to analyze investment offers.
+
+---
+
+### 1. Regex-based Scam Pattern Checker (`pattern_check`)
+
+- Scans the offer text using **regular expressions**.  
+- Looks for risky phrases (from `conf.PATTERNS`), like:  
+  - "guaranteed returns"  
+  - "risk-free investment"  
+  - "act now"  
+- Each match adds to a **risk score** and a **reason** is logged.  
+- Based on thresholds in `conf.THRESHOLDS`:  
+  - **RED** → high risk  
+  - **AMBER** → medium risk  
+  - **GREEN** → low risk  
+
+Provides a fast, rule-based **first layer of fraud detection**.
+
+---
+
+### 2. Tavily Search Tool (`TavilySearchResults`)
+
+- Uses the **Tavily API** to fetch up to **3 credible web results**.  
+- Helps verify if a company, investment scheme, or claim has been flagged online.  
+- Useful for finding **warnings from regulators, watchdogs, or news sources**.  
+- Requires an API key (`TAVILY_API_KEY`) stored in `.env`.
 
 ## Getting Started  
 
